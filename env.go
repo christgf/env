@@ -3,6 +3,7 @@ package env
 import (
 	"os"
 	"strconv"
+	"time"
 )
 
 // String retrieves the value of the environment variable named by the key. If
@@ -130,6 +131,23 @@ func Float64(key string, fallback float64) float64 {
 	}
 
 	res, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		return fallback
+	}
+
+	return res
+}
+
+// Duration retrieves the value of the environment variable named by the key,
+// parses the value as time.Duration, and returns the result. If the variable is
+// not present or its value cannot be parsed, fallback is returned.
+func Duration(key string, fallback time.Duration) time.Duration {
+	value, ok := os.LookupEnv(key)
+	if !ok {
+		return fallback
+	}
+
+	res, err := time.ParseDuration(value)
 	if err != nil {
 		return fallback
 	}

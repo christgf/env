@@ -2,6 +2,7 @@ package env_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/christgf/env"
 )
@@ -225,5 +226,38 @@ func TestFloat64(t *testing.T) {
 	t.Setenv(key, "foo")
 	if got, want := env.Float64(key, 5.25), 5.25; got != want {
 		t.Errorf("Float64(%q): got %.2f, want %.2f", key, got, want)
+	}
+}
+
+func TestDuration(t *testing.T) {
+	var key string
+
+	key = "TEST_DURATION_VAR"
+	if got, want := env.Duration(key, 2*time.Hour), 2*time.Hour; got != want {
+		t.Errorf("Duration(%q): got %v, want %v", key, got, want)
+	}
+
+	key = "TEST_DURATION_VAR_TWO_HOURS"
+	t.Setenv(key, "2h")
+	if got, want := env.Duration(key, 3*time.Hour), 2*time.Hour; got != want {
+		t.Errorf("Duration(%q): got %v, want %v", key, got, want)
+	}
+
+	key = "TEST_DURATION_VAR_TWO_AND_A_HALF_HOURS"
+	t.Setenv(key, "2h30m")
+	if got, want := env.Duration(key, 2*time.Hour), 150*time.Minute; got != want {
+		t.Errorf("Duration(%q): got %v, want %v", key, got, want)
+	}
+
+	key = "TEST_DURATION_VAR_NEGATIVE_UNITS"
+	t.Setenv(key, "-20ms")
+	if got, want := env.Duration(key, 20*time.Millisecond), -20*time.Millisecond; got != want {
+		t.Errorf("Duration(%q): got %v, want %v", key, got, want)
+	}
+
+	key = "TEST_DURATION_VAR_FOO"
+	t.Setenv(key, "foo")
+	if got, want := env.Duration(key, 180*time.Second), 3*time.Minute; got != want {
+		t.Errorf("Duration(%q): got %v, want %v", key, got, want)
 	}
 }
