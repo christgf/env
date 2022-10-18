@@ -1,3 +1,3 @@
 # env
 
-Package is still under development.
+Under development.
