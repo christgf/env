@@ -232,3 +232,65 @@ func Float64(key string, fallback float64) float64 {
 func Duration(key string, fallback time.Duration) time.Duration {
 	return osEnv.Duration(key, fallback)
 }
+
+// StringVar retrieves the value of the environment variable named by the key,
+// and stores the result into the variable pointed by p.
+func StringVar(p *string, key string, fallback string) {
+	*p = osEnv.String(key, fallback)
+}
+
+// BoolVar retrieves the value of the environment variable named by the key,
+// parses the value as a boolean, and stores the result into the variable pointed
+// by p.
+func BoolVar(p *bool, key string, fallback bool) {
+	*p = osEnv.Bool(key, fallback)
+}
+
+// IntVar retrieves the value of the environment variable named by the key,
+// parses the value as an integer, and stores the result into the variable
+// pointed by p.
+func IntVar(p *int, key string, fallback int) {
+	*p = osEnv.Int(key, fallback)
+}
+
+// Int64Var retrieves the value of the environment variable named by the key,
+// parses the value as a 64-bit integer, and stores the result into the variable
+// pointed by p.
+func Int64Var(p *int64, key string, fallback int64) {
+	*p = osEnv.Int64(key, fallback)
+}
+
+// UintVar retrieves the value of the environment variable named by the key,
+// parses the value as an unsigned integer, and stores the result into the
+// variable pointed by p.
+func UintVar(p *uint, key string, fallback uint) {
+	*p = osEnv.Uint(key, fallback)
+}
+
+// Uint64Var retrieves the value of the environment variable named by the key,
+// parses the value as an unsigned 64-bit integer, and stores the result into the
+// variable pointed by p.
+func Uint64Var(p *uint64, key string, fallback uint64) {
+	*p = osEnv.Uint64(key, fallback)
+}
+
+// Float32Var retrieves the value of the environment variable named by the key,
+// parses the value as a floating-point number, and stores the result into the
+// variable pointed by p.
+func Float32Var(p *float32, key string, fallback float32) {
+	*p = osEnv.Float32(key, fallback)
+}
+
+// Float64Var retrieves the value of the environment variable named by the key,
+// parses the value as a 64-bit floating-point number, and stores the result into
+// the variable pointed by p.
+func Float64Var(p *float64, key string, fallback float64) {
+	*p = osEnv.Float64(key, fallback)
+}
+
+// DurationVar retrieves the value of the environment variable named by the key,
+// parses the value as time.Duration, and stores the result into the variable
+// pointed by p.
+func DurationVar(p *time.Duration, key string, fallback time.Duration) {
+	*p = osEnv.Duration(key, fallback)
+}
