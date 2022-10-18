@@ -11,18 +11,18 @@ func TestString(t *testing.T) {
 	const envKey = "ENV_TEST_STRING"
 
 	if got, want := env.String(envKey, "foo"), "foo"; got != want {
-		t.Errorf("String(%q): got %v", envKey, got)
+		t.Errorf("String(%q): got %q, want %q", envKey, got, want)
 	}
 
 	t.Setenv(envKey, "foo")
 	if got, want := env.String(envKey, "bar"), "foo"; got != want {
-		t.Errorf("String(%q): got %q, want: %q", envKey, got, want)
+		t.Errorf("String(%q): got %q, want %q", envKey, got, want)
 	}
 
 	var p string
 	env.StringVar(&p, envKey, "bar")
 	if got, want := p, "foo"; got != want {
-		t.Errorf("StringVar(%q): got %q, want: %q", envKey, got, want)
+		t.Errorf("StringVar(%q): got %q, want %q", envKey, got, want)
 	}
 }
 
@@ -120,7 +120,7 @@ func TestInt(t *testing.T) {
 	const envKey = "ENV_TEST_INT"
 
 	if got, want := env.Int(envKey, 42), 42; got != want {
-		t.Errorf("Int(%q): got %d, want: %d", envKey, got, want)
+		t.Errorf("Int(%q): got %d, want %d", envKey, got, want)
 	}
 
 	tests := []struct {
@@ -164,13 +164,13 @@ func TestInt(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Setenv(envKey, tt.envValue)
 			if got, want := env.Int(envKey, tt.fallback), tt.wantValue; got != want {
-				t.Errorf("Int(%q): got %d, want: %d", envKey, got, want)
+				t.Errorf("Int(%q): got %d, want %d", envKey, got, want)
 			}
 
 			var p int
 			env.IntVar(&p, envKey, tt.fallback)
 			if got, want := p, tt.wantValue; got != want {
-				t.Errorf("IntVar(%q): got %d, want: %d", envKey, got, want)
+				t.Errorf("IntVar(%q): got %d, want %d", envKey, got, want)
 			}
 		})
 	}
@@ -180,7 +180,7 @@ func TestInt64(t *testing.T) {
 	const envKey = "ENV_TEST_INT64"
 
 	if got, want := env.Int64(envKey, 42), int64(42); got != want {
-		t.Errorf("Int64(%q): got %d, want: %d", envKey, got, want)
+		t.Errorf("Int64(%q): got %d, want %d", envKey, got, want)
 	}
 
 	tests := []struct {
@@ -236,13 +236,13 @@ func TestInt64(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Setenv(envKey, tt.envValue)
 			if got, want := env.Int64(envKey, tt.fallback), tt.wantValue; got != want {
-				t.Errorf("Int64(%q): got %d, want: %d", envKey, got, want)
+				t.Errorf("Int64(%q): got %d, want %d", envKey, got, want)
 			}
 
 			var p int64
 			env.Int64Var(&p, envKey, tt.fallback)
 			if got, want := p, tt.wantValue; got != want {
-				t.Errorf("Int64Var(%q): got %d, want: %d", envKey, got, want)
+				t.Errorf("Int64Var(%q): got %d, want %d", envKey, got, want)
 			}
 		})
 	}
@@ -252,7 +252,7 @@ func TestUint(t *testing.T) {
 	const envKey = "ENV_TEST_UINT"
 
 	if got, want := env.Uint(envKey, 42), uint(42); got != want {
-		t.Errorf("Uint(%q): got %d, want: %d", envKey, got, want)
+		t.Errorf("Uint(%q): got %d, want %d", envKey, got, want)
 	}
 
 	tests := []struct {
@@ -296,13 +296,13 @@ func TestUint(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Setenv(envKey, tt.envValue)
 			if got, want := env.Uint(envKey, tt.fallback), tt.wantValue; got != want {
-				t.Errorf("Uint(%q): got %d, want: %d", envKey, got, want)
+				t.Errorf("Uint(%q): got %d, want %d", envKey, got, want)
 			}
 
 			var p uint
 			env.UintVar(&p, envKey, tt.fallback)
 			if got, want := p, tt.wantValue; got != want {
-				t.Errorf("UintVar(%q): got %d, want: %d", envKey, got, want)
+				t.Errorf("UintVar(%q): got %d, want %d", envKey, got, want)
 			}
 		})
 	}
@@ -312,7 +312,7 @@ func TestUint64(t *testing.T) {
 	const envKey = "ENV_TEST_UINT64"
 
 	if got, want := env.Uint64(envKey, 42), uint64(42); got != want {
-		t.Errorf("Uint64(%q): got %d, want: %d", envKey, got, want)
+		t.Errorf("Uint64(%q): got %d, want %d", envKey, got, want)
 	}
 
 	tests := []struct {
@@ -368,13 +368,13 @@ func TestUint64(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Setenv(envKey, tt.envValue)
 			if got, want := env.Uint64(envKey, tt.fallback), tt.wantValue; got != want {
-				t.Errorf("Uint64(%q): got %d, want: %d", envKey, got, want)
+				t.Errorf("Uint64(%q): got %d, want %d", envKey, got, want)
 			}
 
 			var p uint64
 			env.Uint64Var(&p, envKey, tt.fallback)
 			if got, want := p, tt.wantValue; got != want {
-				t.Errorf("Uint64Var(%q): got %d, want: %d", envKey, got, want)
+				t.Errorf("Uint64Var(%q): got %d, want %d", envKey, got, want)
 			}
 		})
 	}
@@ -384,7 +384,7 @@ func TestFloat32(t *testing.T) {
 	const envKey = "ENV_TEST_FLOAT32"
 
 	if got, want := env.Float32(envKey, 42), float32(42); got != want {
-		t.Errorf("Float32(%q): got %.2f, want: %.2f", envKey, got, want)
+		t.Errorf("Float32(%q): got %.2f, want %.2f", envKey, got, want)
 	}
 
 	tests := []struct {
@@ -440,13 +440,13 @@ func TestFloat32(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Setenv(envKey, tt.envValue)
 			if got, want := env.Float32(envKey, tt.fallback), tt.wantValue; got != want {
-				t.Errorf("Float32(%q): got %.2f, want: %.2f", envKey, got, want)
+				t.Errorf("Float32(%q): got %.2f, want %.2f", envKey, got, want)
 			}
 
 			var p float32
 			env.Float32Var(&p, envKey, tt.fallback)
 			if got, want := p, tt.wantValue; got != want {
-				t.Errorf("Float32Var(%q): got %.2f, want: %.2f", envKey, got, want)
+				t.Errorf("Float32Var(%q): got %.2f, want %.2f", envKey, got, want)
 			}
 		})
 	}
@@ -456,7 +456,7 @@ func TestFloat64(t *testing.T) {
 	const envKey = "ENV_TEST_FLOAT64"
 
 	if got, want := env.Float64(envKey, 42), float64(42); got != want {
-		t.Errorf("Float64(%q): got %.2f, want: %.2f", envKey, got, want)
+		t.Errorf("Float64(%q): got %.2f, want %.2f", envKey, got, want)
 	}
 
 	tests := []struct {
@@ -512,13 +512,13 @@ func TestFloat64(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Setenv(envKey, tt.envValue)
 			if got, want := env.Float64(envKey, tt.fallback), tt.wantValue; got != want {
-				t.Errorf("Float64(%q): got %.2f, want: %.2f", envKey, got, want)
+				t.Errorf("Float64(%q): got %.2f, want %.2f", envKey, got, want)
 			}
 
 			var p float64
 			env.Float64Var(&p, envKey, tt.fallback)
 			if got, want := p, tt.wantValue; got != want {
-				t.Errorf("Float64Var(%q): got %.2f, want: %.2f", envKey, got, want)
+				t.Errorf("Float64Var(%q): got %.2f, want %.2f", envKey, got, want)
 			}
 		})
 	}
@@ -528,7 +528,7 @@ func TestDuration(t *testing.T) {
 	const envKey = "ENV_TEST_DURATION"
 
 	if got, want := env.Duration(envKey, 2*time.Second), 2*time.Second; got != want {
-		t.Errorf("Duration(%q): got %v, want: %v", envKey, got, want)
+		t.Errorf("Duration(%q): got %v, want %v", envKey, got, want)
 	}
 
 	tests := []struct {
@@ -590,13 +590,13 @@ func TestDuration(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Setenv(envKey, tt.envValue)
 			if got, want := env.Duration(envKey, tt.fallback), tt.wantValue; got != want {
-				t.Errorf("Duration(%q): got %v, want: %v", envKey, got, want)
+				t.Errorf("Duration(%q): got %v, want %v", envKey, got, want)
 			}
 
 			var p time.Duration
 			env.DurationVar(&p, envKey, tt.fallback)
 			if got, want := p, tt.wantValue; got != want {
-				t.Errorf("DurationVar(%q): got %v, want: %v", envKey, got, want)
+				t.Errorf("DurationVar(%q): got %v, want %v", envKey, got, want)
 			}
 		})
 	}
