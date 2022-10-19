@@ -2,6 +2,7 @@
 package env
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -10,21 +11,27 @@ import (
 // env represents an environment that maintains variables as key-value pairs of
 // strings. Its API is not yet stable therefore it is not public.
 type env struct {
+	prefix   string
 	lookupFn func(key string) (string, bool)
 }
 
-// osEnv is the default env, managing environment variables using functions of
-// the os package of the standard library. The top-level functions such as
-// String, StringVar, and so on are wrappers for the methods of osEnv.
-//
-// osEnv is not public, yet.
-var osEnv = &env{lookupFn: os.LookupEnv}
+// SetPrefix lets this env know it should prepend the value of prefix to every
+// key before it looks it up in the environment using String, Bool, Int, et al.
+// Use the empty string to reset.
+func (e *env) SetPrefix(prefix string) {
+	e.prefix = prefix
+}
+
+// Prefix returns the prefix for this env, if any.
+func (e *env) Prefix() string {
+	return e.prefix
+}
 
 // String retrieves the value of the environment variable named by the key. If
 // the variable is present in the environment, its value (which may be empty) is
 // returned, otherwise fallback is returned.
 func (e *env) String(key string, fallback string) string {
-	value, ok := e.lookupFn(key)
+	value, ok := e.lookup(key)
 	if !ok {
 		return fallback
 	}
@@ -36,7 +43,7 @@ func (e *env) String(key string, fallback string) string {
 // the value as a boolean, and returns the result. If the variable is not
 // present or its value cannot be parsed, fallback is returned.
 func (e *env) Bool(key string, fallback bool) bool {
-	value, ok := e.lookupFn(key)
+	value, ok := e.lookup(key)
 	if !ok {
 		return fallback
 	}
@@ -53,7 +60,7 @@ func (e *env) Bool(key string, fallback bool) bool {
 // the value as an integer, and returns the result. If the variable is not
 // present or its value cannot be parsed, fallback is returned.
 func (e *env) Int(key string, fallback int) int {
-	value, ok := e.lookupFn(key)
+	value, ok := e.lookup(key)
 	if !ok {
 		return fallback
 	}
@@ -70,7 +77,7 @@ func (e *env) Int(key string, fallback int) int {
 // the value as a 64-bit integer, and returns the result. If the variable is not
 // present or its value cannot be parsed, fallback is returned.
 func (e *env) Int64(key string, fallback int64) int64 {
-	value, ok := e.lookupFn(key)
+	value, ok := e.lookup(key)
 	if !ok {
 		return fallback
 	}
@@ -87,7 +94,7 @@ func (e *env) Int64(key string, fallback int64) int64 {
 // the value as an unsigned integer, and returns the result. If the variable is
 // not present or its value cannot be parsed, fallback is returned.
 func (e *env) Uint(key string, fallback uint) uint {
-	value, ok := e.lookupFn(key)
+	value, ok := e.lookup(key)
 	if !ok {
 		return fallback
 	}
@@ -104,7 +111,7 @@ func (e *env) Uint(key string, fallback uint) uint {
 // parses the value as an unsigned 64-bit integer, and returns the result. If the
 // variable is not present or its value cannot be parsed, fallback is returned.
 func (e *env) Uint64(key string, fallback uint64) uint64 {
-	value, ok := e.lookupFn(key)
+	value, ok := e.lookup(key)
 	if !ok {
 		return fallback
 	}
@@ -121,7 +128,7 @@ func (e *env) Uint64(key string, fallback uint64) uint64 {
 // parses the value as a floating-point number, and returns the result. If the
 // variable is not present or its value cannot be parsed, fallback is returned.
 func (e *env) Float32(key string, fallback float32) float32 {
-	value, ok := e.lookupFn(key)
+	value, ok := e.lookup(key)
 	if !ok {
 		return fallback
 	}
@@ -139,7 +146,7 @@ func (e *env) Float32(key string, fallback float32) float32 {
 // the variable is not present or its value cannot be parsed, fallback is
 // returned.
 func (e *env) Float64(key string, fallback float64) float64 {
-	value, ok := e.lookupFn(key)
+	value, ok := e.lookup(key)
 	if !ok {
 		return fallback
 	}
@@ -156,7 +163,7 @@ func (e *env) Float64(key string, fallback float64) float64 {
 // parses the value as time.Duration, and returns the result. If the variable is
 // not present or its value cannot be parsed, fallback is returned.
 func (e *env) Duration(key string, fallback time.Duration) time.Duration {
-	value, ok := e.lookupFn(key)
+	value, ok := e.lookup(key)
 	if !ok {
 		return fallback
 	}
@@ -167,6 +174,33 @@ func (e *env) Duration(key string, fallback time.Duration) time.Duration {
 	}
 
 	return res
+}
+
+func (e *env) lookup(key string) (string, bool) {
+	if len(e.prefix) > 0 {
+		key = fmt.Sprintf("%s%s", e.prefix, key)
+	}
+
+	return e.lookupFn(key)
+}
+
+// osEnv is the default env, managing environment variables using functions of
+// the os package of the standard library. The top-level functions such as
+// String, StringVar, and so on are wrappers for the methods of osEnv.
+//
+// osEnv is not public, yet.
+var osEnv = &env{lookupFn: os.LookupEnv}
+
+// SetPrefix lets the default env know it should prepend the value of prefix to
+// every key before it looks it up in the environment using String, Bool, Int, et
+// al. Use the empty string to reset.
+func SetPrefix(prefix string) {
+	osEnv.SetPrefix(prefix)
+}
+
+// Prefix returns the prefix for the default env.
+func Prefix() string {
+	return osEnv.Prefix()
 }
 
 // String retrieves the value of the environment variable named by the key. If
