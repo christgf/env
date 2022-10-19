@@ -10,19 +10,30 @@ import (
 func TestString(t *testing.T) {
 	const envKey = "ENV_TEST_STRING"
 
-	if got, want := env.String(envKey, "foo"), "foo"; got != want {
+	if got, want := env.String(envKey, "fallback"), "fallback"; got != want {
 		t.Errorf("String(%q): got %q, want %q", envKey, got, want)
 	}
 
 	t.Setenv(envKey, "foo")
-	if got, want := env.String(envKey, "bar"), "foo"; got != want {
+	if got, want := env.String(envKey, "fallback"), "foo"; got != want {
 		t.Errorf("String(%q): got %q, want %q", envKey, got, want)
 	}
 
 	var p string
-	env.StringVar(&p, envKey, "bar")
+	env.StringVar(&p, envKey, "fallback")
 	if got, want := p, "foo"; got != want {
 		t.Errorf("StringVar(%q): got %q, want %q", envKey, got, want)
+	}
+
+	prefix, key := "ENV_", "TEST_STRING"
+	env.SetPrefix(prefix)
+	if got, want := env.String(key, "fallback"), "foo"; got != want {
+		t.Errorf("String(Prefix=%q, Key=%q): got %q, want %q", prefix, key, got, want)
+	}
+
+	env.SetPrefix("")
+	if got, want := env.String(key, "fallback"), "fallback"; got != want {
+		t.Errorf("String(Prefix=%q, Key=%q): got %q, want %q", prefix, key, got, want)
 	}
 }
 
@@ -112,6 +123,17 @@ func TestBool(t *testing.T) {
 			if got, want := p, tt.wantValue; got != want {
 				t.Errorf("BoolVar(%q): got %v", envKey, got)
 			}
+
+			prefix, key := "ENV_", "TEST_BOOL"
+			env.SetPrefix(prefix)
+			if got, want := env.Bool(key, tt.fallback), tt.wantValue; got != want {
+				t.Errorf("Bool(Prefix=%q, Key=%q): got %v", prefix, key, got)
+			}
+
+			env.SetPrefix("")
+			if got, want := env.Bool(key, tt.fallback), tt.fallback; got != want {
+				t.Errorf("Bool(Prefix=%q, Key=%q): got %v", prefix, key, got)
+			}
 		})
 	}
 }
@@ -171,6 +193,17 @@ func TestInt(t *testing.T) {
 			env.IntVar(&p, envKey, tt.fallback)
 			if got, want := p, tt.wantValue; got != want {
 				t.Errorf("IntVar(%q): got %d, want %d", envKey, got, want)
+			}
+
+			prefix, key := "ENV_", "TEST_INT"
+			env.SetPrefix(prefix)
+			if got, want := env.Int(key, tt.fallback), tt.wantValue; got != want {
+				t.Errorf("Int(Prefix=%q, Key=%q): got %d, want %d", prefix, key, got, want)
+			}
+
+			env.SetPrefix("")
+			if got, want := env.Int(key, tt.fallback), tt.fallback; got != want {
+				t.Errorf("Int(Prefix=%q, Key=%q): got %d, want %d", prefix, key, got, want)
 			}
 		})
 	}
@@ -244,6 +277,17 @@ func TestInt64(t *testing.T) {
 			if got, want := p, tt.wantValue; got != want {
 				t.Errorf("Int64Var(%q): got %d, want %d", envKey, got, want)
 			}
+
+			prefix, key := "ENV_", "TEST_INT64"
+			env.SetPrefix(prefix)
+			if got, want := env.Int64(key, tt.fallback), tt.wantValue; got != want {
+				t.Errorf("Int64(Prefix=%q, Key=%q): got %d, want %d", prefix, key, got, want)
+			}
+
+			env.SetPrefix("")
+			if got, want := env.Int64(key, tt.fallback), tt.fallback; got != want {
+				t.Errorf("Int64(Prefix=%q, Key=%q): got %d, want %d", prefix, key, got, want)
+			}
 		})
 	}
 }
@@ -303,6 +347,17 @@ func TestUint(t *testing.T) {
 			env.UintVar(&p, envKey, tt.fallback)
 			if got, want := p, tt.wantValue; got != want {
 				t.Errorf("UintVar(%q): got %d, want %d", envKey, got, want)
+			}
+
+			prefix, key := "ENV_", "TEST_UINT"
+			env.SetPrefix(prefix)
+			if got, want := env.Uint(key, tt.fallback), tt.wantValue; got != want {
+				t.Errorf("Uint(Prefix=%q, Key=%q): got %d, want %d", prefix, key, got, want)
+			}
+
+			env.SetPrefix("")
+			if got, want := env.Uint(key, tt.fallback), tt.fallback; got != want {
+				t.Errorf("Uint(Prefix=%q, Key=%q): got %d, want %d", prefix, key, got, want)
 			}
 		})
 	}
@@ -376,6 +431,17 @@ func TestUint64(t *testing.T) {
 			if got, want := p, tt.wantValue; got != want {
 				t.Errorf("Uint64Var(%q): got %d, want %d", envKey, got, want)
 			}
+
+			prefix, key := "ENV_", "TEST_UINT64"
+			env.SetPrefix(prefix)
+			if got, want := env.Uint64(key, tt.fallback), tt.wantValue; got != want {
+				t.Errorf("Uint64(Prefix=%q, Key=%q): got %d, want %d", prefix, key, got, want)
+			}
+
+			env.SetPrefix("")
+			if got, want := env.Uint64(key, tt.fallback), tt.fallback; got != want {
+				t.Errorf("Uint64(Prefix=%q, Key=%q): got %d, want %d", prefix, key, got, want)
+			}
 		})
 	}
 }
@@ -448,6 +514,17 @@ func TestFloat32(t *testing.T) {
 			if got, want := p, tt.wantValue; got != want {
 				t.Errorf("Float32Var(%q): got %.2f, want %.2f", envKey, got, want)
 			}
+
+			prefix, key := "ENV_", "TEST_FLOAT32"
+			env.SetPrefix(prefix)
+			if got, want := env.Float32(key, tt.fallback), tt.wantValue; got != want {
+				t.Errorf("Float32(Prefix=%q, Key=%q): got %.2f, want %.2f", prefix, key, got, want)
+			}
+
+			env.SetPrefix("")
+			if got, want := env.Float32(key, tt.fallback), tt.fallback; got != want {
+				t.Errorf("Float32(Prefix=%q, Key=%q): got %.2f, want %.2f", prefix, key, got, want)
+			}
 		})
 	}
 }
@@ -519,6 +596,17 @@ func TestFloat64(t *testing.T) {
 			env.Float64Var(&p, envKey, tt.fallback)
 			if got, want := p, tt.wantValue; got != want {
 				t.Errorf("Float64Var(%q): got %.2f, want %.2f", envKey, got, want)
+			}
+
+			prefix, key := "ENV_", "TEST_FLOAT64"
+			env.SetPrefix(prefix)
+			if got, want := env.Float64(key, tt.fallback), tt.wantValue; got != want {
+				t.Errorf("Float64(Prefix=%q, Key=%q): got %.2f, want %.2f", prefix, key, got, want)
+			}
+
+			env.SetPrefix("")
+			if got, want := env.Float64(key, tt.fallback), tt.fallback; got != want {
+				t.Errorf("Float64(Prefix=%q, Key=%q): got %.2f, want %.2f", prefix, key, got, want)
 			}
 		})
 	}
@@ -598,6 +686,33 @@ func TestDuration(t *testing.T) {
 			if got, want := p, tt.wantValue; got != want {
 				t.Errorf("DurationVar(%q): got %v, want %v", envKey, got, want)
 			}
+
+			prefix, key := "ENV_", "TEST_DURATION"
+			env.SetPrefix(prefix)
+			if got, want := env.Duration(key, tt.fallback), tt.wantValue; got != want {
+				t.Errorf("Duration(Prefix=%q, Key=%q): got %v, want %v", prefix, key, got, want)
+			}
+
+			env.SetPrefix("")
+			if got, want := env.Duration(key, tt.fallback), tt.fallback; got != want {
+				t.Errorf("Duration(Prefix=%q, Key=%q): got %v, want %v", prefix, key, got, want)
+			}
 		})
+	}
+}
+
+func TestSetPrefix(t *testing.T) {
+	if got := env.Prefix(); got != "" {
+		t.Fatalf("Prefix(): got %q", got)
+	}
+
+	env.SetPrefix("foo")
+	if got, want := env.Prefix(), "foo"; got != want {
+		t.Fatalf("Prefix(): got %q, want %q", got, want)
+	}
+
+	env.SetPrefix("")
+	if got := env.Prefix(); got != "" {
+		t.Fatalf("Prefix(): got %q, want empty", got)
 	}
 }
