@@ -27,6 +27,27 @@ func (e *env) Prefix() string {
 	return e.prefix
 }
 
+// lookup will apply the prefix for this env to the key provided and invoke
+// lookupFn to retrieve the value of the corresponding environment variable. If
+// the variable is present in the environment the value is returned and the
+// boolean is true. Otherwise, the returned value will be empty and the boolean
+// will be false.
+func (e *env) lookup(key string) (string, bool) {
+	if len(e.prefix) > 0 {
+		key = fmt.Sprintf("%s%s", e.prefix, key)
+	}
+
+	return e.lookupFn(key)
+}
+
+// Lookup retrieves the value of the environment variable named by the key. If
+// the variable is present in the environment the value is returned and the
+// boolean is true. Otherwise, the returned value will be empty and the boolean
+// will be false.
+func (e *env) Lookup(key string) (string, bool) {
+	return e.lookupFn(key)
+}
+
 // String retrieves the value of the environment variable named by the key. If
 // the variable is present in the environment, its value (which may be empty) is
 // returned, otherwise fallback is returned.
@@ -176,14 +197,6 @@ func (e *env) Duration(key string, fallback time.Duration) time.Duration {
 	return res
 }
 
-func (e *env) lookup(key string) (string, bool) {
-	if len(e.prefix) > 0 {
-		key = fmt.Sprintf("%s%s", e.prefix, key)
-	}
-
-	return e.lookupFn(key)
-}
-
 // osEnv is the default env, managing environment variables using functions of
 // the os package of the standard library. The top-level functions such as
 // String, StringVar, and so on are wrappers for the methods of osEnv.
@@ -201,6 +214,14 @@ func SetPrefix(prefix string) {
 // Prefix returns the prefix for the default env.
 func Prefix() string {
 	return osEnv.Prefix()
+}
+
+// Lookup retrieves the value of the environment variable named by the key. If
+// the variable is present in the environment the value is returned and the
+// boolean is true. Otherwise, the returned value will be empty and the boolean
+// will be false.
+func Lookup(key string) (string, bool) {
+	return osEnv.Lookup(key)
 }
 
 // String retrieves the value of the environment variable named by the key. If

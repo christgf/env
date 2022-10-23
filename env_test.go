@@ -7,6 +7,24 @@ import (
 	"github.com/christgf/env"
 )
 
+func TestLookup(t *testing.T) {
+	const envKey = "ENV_TEST_LOOKUP"
+
+	if value, ok := env.Lookup(envKey); ok {
+		t.Errorf("Lookup(%q): got %q", envKey, value)
+	}
+
+	t.Setenv(envKey, "foo")
+	value, ok := env.Lookup(envKey)
+	if !ok {
+		t.Errorf("Lookup(%q): want true", envKey)
+	}
+
+	if got, want := value, "foo"; got != want {
+		t.Errorf("Lookup(%q): got %q, want %q", envKey, got, want)
+	}
+}
+
 func TestString(t *testing.T) {
 	const envKey = "ENV_TEST_STRING"
 
