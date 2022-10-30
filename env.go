@@ -1,4 +1,4 @@
-// Package env can retrieve and parse environment variables.
+// Package env can retrieve and parse environment variables, with defaults.
 package env
 
 import (
