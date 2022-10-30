@@ -45,7 +45,7 @@ func (e *env) lookup(key string) (string, bool) {
 // boolean is true. Otherwise, the returned value will be empty and the boolean
 // will be false.
 func (e *env) Lookup(key string) (string, bool) {
-	return e.lookupFn(key)
+	return e.lookup(key)
 }
 
 // String retrieves the value of the environment variable named by the key. If

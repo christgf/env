@@ -23,6 +23,19 @@ func TestLookup(t *testing.T) {
 	if got, want := value, "foo"; got != want {
 		t.Errorf("Lookup(%q): got %q, want %q", envKey, got, want)
 	}
+
+	prefix, key := "ENV_", "TEST_LOOKUP"
+	env.SetPrefix(prefix)
+	_, ok = env.Lookup(key)
+	if !ok {
+		t.Errorf("Lookup(Prefix=%q, Key=%q): want true", prefix, key)
+	}
+
+	env.SetPrefix("")
+	_, ok = env.Lookup(key)
+	if ok {
+		t.Errorf("Lookup(%q): got true", key)
+	}
 }
 
 func TestString(t *testing.T) {
