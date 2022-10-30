@@ -1,4 +1,4 @@
-// Package env is still under development.
+// Package env can retrieve and parse environment variables.
 package env
 
 import (
@@ -9,15 +9,14 @@ import (
 )
 
 // env represents an environment that maintains variables as key-value pairs of
-// strings. Its API is not yet stable therefore it is not public.
+// strings. Its API is not yet stable therefore it is not yet public.
 type env struct {
-	prefix   string
-	lookupFn func(key string) (string, bool)
+	prefix string
 }
 
-// SetPrefix lets this env know it should prepend the value of prefix to every
-// key before it looks it up in the environment using String, Bool, Int, et al.
-// Use the empty string to reset.
+// SetPrefix makes this env prepend the value of prefix to every key before it
+// looks it up in the environment using String, StringVar, Bool, Int, et al. Use
+// the empty string to reset.
 func (e *env) SetPrefix(prefix string) {
 	e.prefix = prefix
 }
@@ -27,17 +26,16 @@ func (e *env) Prefix() string {
 	return e.prefix
 }
 
-// lookup will apply the prefix for this env to the key provided and invoke
-// lookupFn to retrieve the value of the corresponding environment variable. If
-// the variable is present in the environment the value is returned and the
-// boolean is true. Otherwise, the returned value will be empty and the boolean
-// will be false.
+// lookup will apply the prefix for this env to the key provided and attempt to
+// retrieve the value of the corresponding environment variable. If the variable
+// is present in the environment the value is returned and the boolean is true.
+// Otherwise, the returned value will be empty and the boolean will be false.
 func (e *env) lookup(key string) (string, bool) {
 	if len(e.prefix) > 0 {
 		key = fmt.Sprintf("%s%s", e.prefix, key)
 	}
 
-	return e.lookupFn(key)
+	return os.LookupEnv(key)
 }
 
 // Lookup retrieves the value of the environment variable named by the key. If
@@ -197,16 +195,15 @@ func (e *env) Duration(key string, fallback time.Duration) time.Duration {
 	return res
 }
 
-// osEnv is the default env, managing environment variables using functions of
-// the os package of the standard library. The top-level functions such as
-// String, StringVar, and so on are wrappers for the methods of osEnv.
+// osEnv is the default env. Top-level functions such as String, StringVar, Bool,
+// etc. are wrappers for the methods of osEnv.
 //
 // osEnv is not public, yet.
-var osEnv = &env{lookupFn: os.LookupEnv}
+var osEnv = &env{prefix: ""}
 
-// SetPrefix lets the default env know it should prepend the value of prefix to
-// every key before it looks it up in the environment using String, Bool, Int, et
-// al. Use the empty string to reset.
+// SetPrefix makes this env prepend the value of prefix to every key before it
+// looks it up in the environment using String, StringVar, Bool, Int, et al. Use
+// the empty string to reset.
 func SetPrefix(prefix string) {
 	osEnv.SetPrefix(prefix)
 }
