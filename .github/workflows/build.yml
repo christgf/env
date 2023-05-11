@@ -1,0 +1,27 @@
+name: build
+
+on: [push]
+
+jobs:
+  run:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go }}
+          check-latest: true
+          cache: false
+
+      - name: Build
+        run: go build -o /dev/null ./...
+
+      - name: Test
+        run: go test -count=1 -race -shuffle=on ./...
